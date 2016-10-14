@@ -1,16 +1,27 @@
 {% extends 'base.html' %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
+{% load wagtailtrans_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
 <nav><ul>
-        {% for translation in page.get_translations %}
-        <a href="{% pageurl translation %}">{{ translation.language }}</a>
-        {% endfor %}
+    {% for translation in page.get_translations %}
+    <a href="{% pageurl translation %}">{{ translation.language }}</a>
+    {% endfor %}
+
+
 </ul></nav>
 
+<div class="container pull-right">
+    {% get_page_translations as translations %}
+    <ul>
+    {% for code, url, is_active in translations %}
+        <a href="{{ url }}"><li> {{ code }}</li></a>
+    {% endfor %}
+    </ul>
+</div>
 <h1>{{ page.title }}</h1>
 
 {{ page.body|richtext }}
