@@ -1,17 +1,24 @@
-from django import template
+
+from django import VERSION as django_version
 from django.conf import settings
+from django.template import Library
 
 from wagtailtrans.models import TranslatablePage
 
-register = template.Library()
+register = Library()
+
+assignment_tag = register.simple_tag
+if django_version < (1, 9):
+    assignment_tag = register.assignment_tag
 
 
-@register.simple_tag
+@assignment_tag
 def get_canonical_pages_for_delete(page):
     """Get the translations made for this page
 
     :param page: Page instance
     :return: queryset or False
+
     """
     page = page.specific
     if (

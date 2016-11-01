@@ -1,10 +1,21 @@
 {% extends 'base.html' %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
+{% load wagtailtrans_tags %}
 
 {% block body_class %}template-homepage{% endblock %}
 
 {% block content %}
+
+
+{% get_available_language_urls as language_selector %}
+<ul>
+    {% for language in language_selector %}
+    <li>{{ language }}</li>
+    {% endfor %}
+</ul>
+
+
 <nav><ul>
         {% for translation in page.get_translations %}
         <a href="{% pageurl translation %}">{{ translation.language }}</a>

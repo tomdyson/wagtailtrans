@@ -155,14 +155,29 @@ class TranslatablePage(Page):
         are sorted by the language position.
 
         :param only_live: Boolean to filter on live pages & languages.
-        :return: TranslatablePage instance
+        :return: TranslatablePage QuerySet
+
+        """
+        return (
+            self.get_translations_and_self(only_live=only_live)
+                .exclude(pk=self.pk))
+
+    def get_translations_and_self(self, only_live=True):
+        """Get a TranslatablePage QuerySet with all trannslations
+        of the current page, including the current page.
+
+        :param only_live: Boolean to filter on live pages & languages.
+        :return: TranslatablePage QuerySet
 
         """
         canonical_page = self.canonical_page or self
-        translations = TranslatablePage.objects.filter(
-            Q(canonical_page=canonical_page) |
-            Q(pk=canonical_page.pk)
-        ).exclude(pk=self.pk)
+        translations = (
+            TranslatablePage.objects
+            .select_related('language')
+            .filter(
+                Q(canonical_page=canonical_page) |
+                Q(pk=canonical_page.pk)
+            ))
 
         if only_live:
             translations = translations.live().filter(language__live=True)
